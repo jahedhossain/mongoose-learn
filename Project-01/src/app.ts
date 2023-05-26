@@ -1,6 +1,6 @@
 import express, { Application, Request, Response } from "express";
 import cors from "cors";
-import mongoose, { Schema } from "mongoose";
+import mongoose, { Schema, model } from "mongoose";
 
 // middleware
 const app: Application = express();
@@ -13,7 +13,7 @@ app.get("/hello", (req: Request, res: Response) => {
 });
 
 // user create api
-app.post("/user", (req: Request, res: Response) => {
+app.get("/user", (req: Request, res: Response) => {
   // interface IUser
   interface IUser {
     id: number;
@@ -26,14 +26,14 @@ app.post("/user", (req: Request, res: Response) => {
     email?: string;
     password: string;
     dateOfBirth: string;
-    gender: "male" | "female";
+    gender: "male" | "femalee";
     emergencyContact: string;
     presentAddress: string;
     permanentAddress: string;
   }
   // userSchema
   const userSchema = new Schema<IUser>({
-    id: { type: Number, required: true },
+    id: { type: Number, required: true, unique: true },
     role: { type: String, required: true },
     name: {
       firstName: { type: String, required: true },
@@ -49,7 +49,36 @@ app.post("/user", (req: Request, res: Response) => {
     permanentAddress: { type: String, required: true },
   });
   // user model
-  const User = mongoose.model<IUser>("User", userSchema);
+  const User = model<IUser>("Users", userSchema);
+
+  // create user
+  const user = new User({
+    id: "278588",
+    role: "student",
+    name: {
+      firstName: "jahede",
+      middleName: "hasan",
+      lastName: "jahed",
+    },
+    email: "jahed.w.dev@gmail.com",
+    password: "123456",
+    dateOfBirth: "1998-12-12",
+    gender: "female",
+    emergencyContact: "01700000000",
+    presentAddress: "Dhaka, Bangladesh",
+    // permanentAddress: "Dhaka, Bangladesh",
+  });
+
+  // save user to database
+  const saveUser = async () => {
+    try {
+      const result = await user.save();
+      console.log(result);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  saveUser();
 });
 
 export default app;
