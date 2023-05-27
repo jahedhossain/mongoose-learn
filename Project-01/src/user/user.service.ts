@@ -4,6 +4,7 @@ import { User } from "./user.model";
 // save user to database
 export const saveUserDB = async (payload: IUser): Promise<IUser> => {
   const user = new User(payload);
+  
   await user.save();
   return user;
 };
@@ -15,10 +16,18 @@ export const getUserDB = async (): Promise<IUser[]> => {
 
 // user by id
 export const getUserByIdDB = async (id: string): Promise<IUser | null> => {
-  return await User.findOne({
-    id: id,
-  },{ 
-    name: 1,
-    email: 1,
-  });
+  return await User.findOne(
+    {
+      id: id,
+    },
+    {
+      name: 1,
+      email: 1,
+    }
+  );
+};
+// admin user list
+export const getAdminUsersDB = async (): Promise<IUser | []> => {
+  const adminList = await User.getAdminUsers();
+  return adminList;
 };
